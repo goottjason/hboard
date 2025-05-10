@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/layout.html}">
+<head>
+  <th:block layout:fragment="head">
+    <title>list.html</title>
+  </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+  <h1>HBoard</h1>
+  <table class="table table-hover">
+    <thead class="table-success">
+    <tr>
+      <th>글번호</th>
+      <th>제목</th>
+      <th>작성자</th>
+      <th>작성일</th>
+      <th>조회수</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="post : ${hBoardResponseDTO}">
+      <td th:text="${post.boardNo}">글번호</td>
+      <td th:text="${post.title}">제목</td>
+      <td th:text="${post.writer}">작성자</td>
+      <td th:text="${post.postDate}">작성일</td>
+      <td th:text="${post.readCount}">조회수</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

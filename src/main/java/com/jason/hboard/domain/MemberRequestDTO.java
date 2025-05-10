@@ -1,0 +1,22 @@
+package com.jason.hboard.domain;
+
+import lombok.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
+@ToString
+public class MemberRequestDTO {
+  private String memberId;
+  private String memberPwd;
+  private String memberName;
+  private String memberMobile;
+  private String memberEmail;
+
+  @Builder.Default // 기본값 적용하려면 추가
+  private String memberImg = "avatar.png";
+  @Builder.Default
+  private String memberGender = "U";
+}
