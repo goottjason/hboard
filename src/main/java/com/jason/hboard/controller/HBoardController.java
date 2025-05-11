@@ -35,22 +35,29 @@ public class HBoardController {
     return "index";
   }
 
+
+  // ================== 목록 불러오기
   @GetMapping("/hboard/list")
   public String list(PageHBoardRequestDTO pageHBoardRequestDTO, Model model) {
-
     log.info("◆list.html로 이동...");
 
-    // List<HBoardResponseDTO> hBoardResponseDTO = hBoardService.getAllPosts();
-
+    // 파라미터 없이 요청시, 기본값인 pageNo=1, pageSize=15로 DB에 요청됨
     PageHBoardResponseDTO<HBoardResponseDTO> hBoardResponseDTO = hBoardService.getPostsByPage(pageHBoardRequestDTO);
 
     model.addAttribute("pageDto", hBoardResponseDTO);
     return "/hboard/list";
   }
+
+  // ================== 게시글(detail) 불러오기
   @GetMapping("/hboard/detail")
-  public String detail(Model model, @RequestParam(value = "boardNo") int boardNo) {
-    HBoardResponseDTO hBoardResponseDTO = hBoardService.getPostByBoardNo(boardNo);
-    model.addAttribute("hBoardResponseDTO", hBoardResponseDTO);
+  public String detail(PageHBoardRequestDTO pageHBoardRequestDTO, Model model,
+                       @RequestParam(value = "boardNo") int boardNo) {
+
+    pageHBoardRequestDTO.setBoardNo(boardNo);
+
+    PageHBoardResponseDTO<HBoardResponseDTO> hBoardResponseDTO = hBoardService.getPostByBoardNo(pageHBoardRequestDTO);
+    // HBoardResponseDTO hBoardResponseDTO = hBoardService.getPostByBoardNo(boardNo);
+    model.addAttribute("pageDto", hBoardResponseDTO);
     return "/hboard/detail";
   }
 
@@ -64,19 +71,20 @@ public class HBoardController {
   3. 폼 제출(POST) : 입력필드에 입력한 값이 객체에 자동 바인딩(자바객체에 채워짐)되어 컨트롤러에 전달됨
    */
 
+  // ================== 게시글 등록하기
   @GetMapping("/hboard/register")
   public String register(Model model) {
     // 빈 객체 생성 후
-    HBoardRequestDTO hBoardRequestDTO = new HBoardRequestDTO();
+    // HBoardRequestDTO hBoardRequestDTO = new HBoardRequestDTO();
+    PageHBoardRequestDTO pageHBoardRequestDTO = new PageHBoardRequestDTO();
     // 뷰로 객체를 전달
-    model.addAttribute("hBoardRequestDTO", hBoardRequestDTO);
+    model.addAttribute("pageDto", pageHBoardRequestDTO);
+
 
     return "/hboard/register";
   }
-
   @PostMapping("/hboard/register")
-  public String register(@Valid @ModelAttribute("hBoardRequestDTO") HBoardRequestDTO hBoardRequestDTO,
-                         BindingResult bindingResult) {
+  public String register(@Valid @ModelAttribute("pageDto") PageHBoardRequestDTO pageHBoardRequestDTO, BindingResult bindingResult) {
     /*
     @Valid : 각 필드를 유효성 검사하여 실패한 필드와 메시지가 BindingResult 객체에 저장됨
     @ModelAttribute : 뷰에서 컨트롤러로 입력한 데이터가 자바 객체의 각 필드에 바인딩되어 전달됨
@@ -93,12 +101,13 @@ public class HBoardController {
     }
 
     // 글 등록
-    hBoardService.registerPost(hBoardRequestDTO);
+    hBoardService.registerPost(pageHBoardRequestDTO.getHBoardRequestDTOList().get(0));
 
     // hBoardRequestDTO에 boardNo를 set되었으므로, get하여 GET요청하도록 redirect함
-    return "redirect:/hboard/detail?boardNo=" + hBoardRequestDTO.getBoardNo();
+    return "redirect:/hboard/detail?boardNo=" + pageHBoardRequestDTO.getHBoardRequestDTOList().get(0).getBoardNo();
   }
 
+  // ================== 답글 등록하기
   @GetMapping("/hboard/registerReply")
   public String registerReply(@RequestParam("ref") int ref,
                               @RequestParam("step") int step,
@@ -131,8 +140,7 @@ public class HBoardController {
 
     // 글 등록
     hBoardService.registerReply(hBoardRequestDTO);
-
-    return "redirect:/hboard/list";
+    return "redirect:/hboard/detail?boardNo=" + hBoardRequestDTO.getBoardNo();
   }
 
 }

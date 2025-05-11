@@ -29,6 +29,7 @@ public class PageHBoardResponseDTO<T> {
     this.pageNo = pageHBoardRequestDTO.getPageNo();
     this.pageSize = pageHBoardRequestDTO.getPageSize();
     this.totalPosts = totalPosts;
+
     this.responseDTOList = responseDTOList;
 
     this.blockEndPage = (((this.pageNo - 1) / this.pageSize) + 1) * this.pageSize;

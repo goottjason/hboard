@@ -12,7 +12,7 @@
 <div layout:fragment="content">
   <h1>register.html</h1>
 
-  <form th:action="@{/hboard/register}" method="post" th:object="${hBoardRequestDTO}">
+  <form th:action="@{/hboard/register}" method="post">
     <!--
     - th:action="@{/hboard/register}" : 폼을 제출할 때 데이터를 보낼 URL을 지정
     - th:object="${hBoardRequestDTO}"
@@ -24,8 +24,10 @@
     -->
 
     <div class="text-center" style="min-height: 1.5em;">
-      <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-center text-danger"></span>
-      <span th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-center text-danger"></span>
+      <span th:if="${#fields.hasErrors('pageDto.hBoardRequestDTOList[0].title')}"
+            th:errors="${pageDto.hBoardRequestDTOList[0].title}"></span>
+      <!--<span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-center text-danger"></span>
+      <span th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="text-center text-danger"></span>-->
       <!--
       1. title 필드에 대한 유효성 검증 수행
       2. 에러가 있으면 컨트롤러에서 BindingResult에 에러메시지 저장
@@ -39,19 +41,19 @@
       <tr>
         <th style="width: 80px;">제목</th>
         <td colspan="5" class="text-start">
-          <input type="text" th:field="*{title}" class="form-control">
+          <input type="text" th:field="${pageDto.hBoardRequestDTOList[0].title}" class="form-control">
         </td>
       </tr>
       <tr>
         <th style="width: 80px;">작성자</th>
         <td colspan="5" class="text-start" style="width: 120px;">
-          <input type="text" th:field="*{writer}" class="form-control">
+          <input type="text" th:field="${pageDto.hBoardRequestDTOList[0].writer}" class="form-control">
         </td>
       </tr>
       </tbody>
     </table>
 
-    <textarea th:field="*{content}" class="form-control p-3 mb-3" rows="15"></textarea>
+    <textarea th:field="${pageDto.hBoardRequestDTOList[0].content}" class="form-control p-3 mb-3" rows="15"></textarea>
 
     <table class="table table-bordered align-middle mb-4">
       <thead class="table-light">

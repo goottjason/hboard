@@ -18,6 +18,18 @@ public interface HBoardMapper {
 
   // =========================================
 
+
+
+  @Select("SELECT count(*) FROM selfhboard")
+  int selectTotalPostsCount();
+
+  @Select("""
+    SELECT * FROM selfhboard 
+    ORDER BY ref DESC, refOrder ASC LIMIT #{offset}, #{pageSize}""")
+  List<HBoardResponseDTO> selectPostsByPage(PageHBoardRequestDTO pageHBoardRequestDTO);
+
+
+
   @Insert("""
     INSERT INTO selfhboard (title, content, writer)
     VALUES (#{title}, #{content}, #{writer})""")
@@ -28,20 +40,14 @@ public interface HBoardMapper {
   @Update("UPDATE selfhboard SET ref = #{boardNo} WHERE boardNo = #{boardNo}")
   int updateSetRefToBoardNo(int boardNo);
 
-  @Select("SELECT * FROM selfhboard")
-  List<HBoardResponseDTO> selectAllPosts();
-
-  @Select("""
-    SELECT * FROM selfhboard 
-    ORDER BY ref DESC, refOrder ASC LIMIT #{offset}, #{pageSize}""")
-  List<HBoardResponseDTO> selectPostsByPage(PageHBoardRequestDTO pageHBoardRequestDTO);
 
 
-  @Select("SELECT count(*) FROM selfhboard")
-  int selectTotalPostsCount();
+
+
+
 
   @Select("SELECT * FROM selfhboard WHERE boardNo = #{boardNo}")
-  HBoardResponseDTO selectPostByboardNo(int boardNo);
+  List<HBoardResponseDTO> selectPostByboardNo(PageHBoardRequestDTO pageHBoardRequestDTO);
 
   /*
    파라미터 두 개라면, 반드시 @Param("")을 붙여야 함

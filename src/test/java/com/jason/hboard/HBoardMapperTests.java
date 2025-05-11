@@ -65,14 +65,14 @@ public class HBoardMapperTests {
   @Rollback(value = false)
   public void testSelectAllHBoard() {
 
-    log.info("◆result : {}", hBoardMapper.selectAllPosts());
+    // log.info("◆result : {}", hBoardMapper.selectAllPosts());
 
   }
 
   @Test
   @Rollback(value =false)
   public void testRegisterDummyData() {
-    for (int i = 0; i < 500; i++) {
+    for (int i = 2; i <= 300; i++) {
       HBoardRequestDTO hBoardRequestDTO = HBoardRequestDTO.builder()
         .title("dummy 제목 " + i)
         .content("dummy 내용 " + i)

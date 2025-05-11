@@ -17,18 +17,20 @@ import java.util.List;
 public class HBoardServiceImpl implements HBoardService {
   private final HBoardMapper hBoardMapper;
 
-  /*@Override
-  public List<HBoardResponseDTO> getAllPosts() {
-    return hBoardMapper.selectAllHBoard();
-  }*/
-
   @Override
   public PageHBoardResponseDTO<HBoardResponseDTO> getPostsByPage(PageHBoardRequestDTO pageHBoardRequestDTO) {
-
-    List<HBoardResponseDTO> dtoList = hBoardMapper.selectPostsByPage(pageHBoardRequestDTO);
-
+    // 현재 총 게시글의 수를 카운트
     int totalPosts = hBoardMapper.selectTotalPostsCount();
 
+    // pageNo를 토대로 만들어진 offset과 pageSize로 posts를 리스트에 담음
+    List<HBoardResponseDTO> dtoList = hBoardMapper.selectPostsByPage(pageHBoardRequestDTO);
+
+    /* 요청할 당시의 pageHBoardRequestDTO의 값이 필요한 이유?
+    blockEndPage, blockStartPage, lastPage, showPrevBlockButton, showNextBlockButton의 값을 응답할 때
+    pageNo와 pageSize를 토대로 식이 구성되므로 필요함
+     */
+
+    // 커스텀 빌더메서드
     return PageHBoardResponseDTO.<HBoardResponseDTO>withPageInfo()
       .pageHBoardRequestDTO(pageHBoardRequestDTO)
       .responseDTOList(dtoList)
@@ -37,8 +39,18 @@ public class HBoardServiceImpl implements HBoardService {
   }
 
   @Override
-  public HBoardResponseDTO getPostByBoardNo(int boardNo) {
-    return hBoardMapper.selectPostByboardNo(boardNo);
+  public PageHBoardResponseDTO<HBoardResponseDTO> getPostByBoardNo(PageHBoardRequestDTO pageHBoardRequestDTO) {
+
+    int totalPosts = hBoardMapper.selectTotalPostsCount();
+
+    List<HBoardResponseDTO> dtoList = hBoardMapper.selectPostByboardNo(pageHBoardRequestDTO);
+
+    // 커스텀 빌더메서드
+    return PageHBoardResponseDTO.<HBoardResponseDTO>withPageInfo()
+      .pageHBoardRequestDTO(pageHBoardRequestDTO)
+      .responseDTOList(dtoList)
+      .totalPosts(totalPosts)
+      .build();
   }
 
   @Override

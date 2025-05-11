@@ -1,9 +1,13 @@
 package com.jason.hboard.domain;
 
+import jakarta.validation.Valid;
 import lombok.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
+
+import java.util.List;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +29,14 @@ public class PageHBoardRequestDTO {
   private int offset;
 
   private String params;
+
+  private int boardNo;
+  private int ref;
+  private int step;
+  private int refOrder;
+
+  @Valid
+  private List<HBoardRequestDTO> hBoardRequestDTOList;
 
   public int getOffset() {
     return (pageNo - 1) * pageSize;

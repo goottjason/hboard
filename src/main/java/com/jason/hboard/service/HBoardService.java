@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface HBoardService {
   PageHBoardResponseDTO<HBoardResponseDTO> getPostsByPage(PageHBoardRequestDTO pageHBoardRequestDTO);
-  HBoardResponseDTO getPostByBoardNo(int boardNo);
+  PageHBoardResponseDTO<HBoardResponseDTO>  getPostByBoardNo(PageHBoardRequestDTO pageHBoardRequestDTO);
 
   void registerPost(@Valid HBoardRequestDTO hBoardRequestDTO);
 
