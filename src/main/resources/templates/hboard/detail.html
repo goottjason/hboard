@@ -10,50 +10,53 @@
 </head>
 <body>
 <div layout:fragment="content">
-  <h1>Detail.html</h1>
-  <table class="table">
-    <tbody>
-    <tr>
-      <th style="width: 80px;">제목</th>
-      <td colspan="5" class="text-start">제목입니다...</td>
-    </tr>
-    <tr>
-      <th style="width: 80px;">작성자</th>
-      <td style="width: 120px;">홍길동</td>
-      <th style="width: 80px;">작성일</th>
-      <td style="width: 120px;">2025.05.10</td>
-      <th style="width: 80px;">조회수</th>
-      <td>34</td>
-    </tr>
-    </tbody>
-  </table>
-  <div class="border rounded p-3 mb-3 text-start" style="min-height: 120px; background-color: #f8f9fa;">
-    본문내용
-  </div>
-  <table class="table table-bordered align-middle mb-4">
-    <thead class="table-light">
-    <tr>
-      <th style="width: 120px;">미리보기</th>
-      <th>파일명</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td>
-        <img src="https://via.placeholder.com/80x80?text=Preview" alt="미리보기" style="max-width:80px; max-height:80px;">
-      </td>
-      <td>
-        <a href="#">파일명.pdf</a>
-      </td>
-    </tr>
-    <!-- 파일이 여러 개라면 tr을 추가하세요 -->
-    </tbody>
-  </table>
-  <div class="d-flex justify-content-end gap-2">
-    <a href="/board/list" class="btn btn-secondary">목록으로</a>
-    <a href="/board/list" class="btn btn-warning">답글작성</a>
-    <a href="/board/edit/1" class="btn btn-primary">수정</a>
-    <a href="/board/delete/1" class="btn btn-danger">삭제</a>
+  <h1>detail.html</h1>
+  <div th:object="${hBoardResponseDTO}">
+    <table class="table">
+      <tbody>
+      <tr>
+        <th style="width: 80px;">제목</th>
+        <td th:text="*{title}" colspan="5" class="text-start">제목입니다...</td>
+      </tr>
+      <tr>
+        <th style="width: 80px;">작성자</th>
+        <td th:text="*{writer}" class="text-start" style="width: 120px;">홍길동</td>
+        <th style="width: 80px;">작성일</th>
+        <td th:text="${#dates.format(hBoardResponseDTO.postDate, 'yy-MM-dd HH:mm')}"
+            class="text-start" style="width: 200px;">2025.05.10</td>
+        <th style="width: 80px;">조회수</th>
+        <td th:text="*{readCount}" class="text-start">34</td>
+      </tr>
+      </tbody>
+    </table>
+    <div th:text="*{content}" class="border rounded p-3 mb-3 text-start"
+         style="min-height: 120px; background-color: #f8f9fa;">본문내용
+    </div>
+    <table class="table table-bordered align-middle mb-4">
+      <thead class="table-light">
+      <tr>
+        <th style="width: 120px;">미리보기</th>
+        <th>파일명</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          <img src="https://via.placeholder.com/80x80?text=Preview" style="max-width:80px; max-height:80px;">
+        </td>
+        <td>
+          <a href="#">파일명.pdf</a>
+        </td>
+      </tr>
+      <!-- 파일이 여러 개라면 tr을 추가하세요 -->
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-end gap-2">
+      <a href="/hboard/list" class="btn btn-secondary">목록으로</a>
+      <a th:href="@{/hboard/registerReply(boardNo=${hBoardResponseDTO.boardNo}, ref=${hBoardResponseDTO.ref}, step=${hBoardResponseDTO.step}, refOrder=${hBoardResponseDTO.refOrder})}" class="btn btn-warning">답글작성</a>
+      <a href="/hboard/edit/1" class="btn btn-primary">수정</a>
+      <a href="/hboard/delete/1" class="btn btn-danger">삭제</a>
+    </div>
   </div>
 </div>
 </body>

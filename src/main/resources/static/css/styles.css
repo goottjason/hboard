@@ -245,11 +245,17 @@ sup {
 }
 
 a {
-  color: var(--bs-link-color);
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: bold;
+  color: #222;
+
+  /*color: var(--bs-link-color);*/
 }
 a:hover {
-  color: var(--bs-link-hover-color);
+  /*color: var(--bs-link-hover-color);*/
+  text-decoration: none; /* 밑줄은 유지하거나 없앨 수 있음 */
+  font-weight: bold;
+  color: #057b00;
 }
 
 a:not([href]):not([class]), a:not([href]):not([class]):hover {

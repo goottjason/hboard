@@ -11,6 +11,9 @@
 <body>
 <div layout:fragment="content">
   <h1>HBoard</h1>
+  <div class="text-end mb-3">
+    <a href="/hboard/register" class="btn btn-success">글쓰기</a>
+  </div>
   <table class="table table-hover">
     <thead class="table-success">
     <tr>
@@ -22,15 +25,25 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="post : ${hBoardResponseDTO}">
+    <tr th:each="post : ${pageDto.responseDTOList}">
       <td th:text="${post.boardNo}">글번호</td>
-      <td th:text="${post.title}">제목</td>
+      <td class="text-start"><a th:text="${post.title}" th:href="@{/hboard/detail(boardNo=${post.boardNo})}">제목</a></td>
       <td th:text="${post.writer}">작성자</td>
-      <td th:text="${post.postDate}">작성일</td>
+      <td th:text="${#dates.format(post.postDate, 'yy-MM-dd HH:mm')}">작성일</td>
       <td th:text="${post.readCount}">조회수</td>
     </tr>
     </tbody>
   </table>
+  <div>
+    <ul class="pagination justify-content-center">
+      <li class="page-item"><a class="page-link text-dark" href="javascript:void(0);">Previous</a></li>
+
+      <li th:each="i : ${#numbers.sequence(pageDto.blockStartPage, pageDto.blockEndPage)}"
+          class="page-item">
+        <a th:text="${i}" th:href="@{/hboard/list(pageNo=${i})}" class="page-link text-dark" href="javascript:void(0);">i</a></li>
+      <li class="page-item"><a class="page-link text-dark" href="javascript:void(0);">Next</a></li>
+    </ul>
+  </div>
 </div>
 </body>
 </html>

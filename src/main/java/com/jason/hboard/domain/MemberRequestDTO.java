@@ -19,4 +19,6 @@ public class MemberRequestDTO {
   private String memberImg = "avatar.png";
   @Builder.Default
   private String memberGender = "U";
+  @Builder.Default
+  private int memberPoint = 1000;
 }

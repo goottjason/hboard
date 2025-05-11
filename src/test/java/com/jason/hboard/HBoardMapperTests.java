@@ -54,7 +54,7 @@ public class HBoardMapperTests {
       .content(null)
       .writer("hong1234")
       .build();
-    log.info("◆result : {}", hBoardMapper.insertNewHBoard(hBoardRequestDTO));
+    log.info("◆result : {}", hBoardMapper.insertNewPost(hBoardRequestDTO));
 
     // 2. 생성된 boardNo로 ref를 수정
     log.info("◆result : {}", hBoardMapper.updateSetRefToBoardNo(hBoardRequestDTO.getBoardNo()));
@@ -64,6 +64,22 @@ public class HBoardMapperTests {
   @Test
   @Rollback(value = false)
   public void testSelectAllHBoard() {
-    log.info("◆result : {}", hBoardMapper.selectAllHBoard());
+
+    log.info("◆result : {}", hBoardMapper.selectAllPosts());
+
+  }
+
+  @Test
+  @Rollback(value =false)
+  public void testRegisterDummyData() {
+    for (int i = 0; i < 500; i++) {
+      HBoardRequestDTO hBoardRequestDTO = HBoardRequestDTO.builder()
+        .title("dummy 제목 " + i)
+        .content("dummy 내용 " + i)
+        .writer("hong1234")
+        .build();
+      hBoardMapper.insertNewPost(hBoardRequestDTO);
+      hBoardMapper.updateSetRefToBoardNo(hBoardRequestDTO.getBoardNo());
+    }
   }
 }
