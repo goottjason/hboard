@@ -11,25 +11,25 @@
 <body>
 <div layout:fragment="content">
   <h1>detail.html</h1>
-  <div>
-    <table class="table">
+  <div th:object="${hBoardRespDTO}">
+    <table class="table" >
       <tbody>
       <tr>
         <th style="width: 80px;">제목</th>
-        <td th:text="${pageDto.responseDTOList[0].title}" colspan="5" class="text-start">제목입니다...</td>
+        <td th:text="*{title}" colspan="5" class="text-start">제목입니다...</td>
       </tr>
       <tr>
         <th style="width: 80px;">작성자</th>
-        <td th:text="${pageDto.responseDTOList[0].writer}" class="text-start" style="width: 120px;">홍길동</td>
+        <td th:text="*{writer}" class="text-start" style="width: 120px;">홍길동</td>
         <th style="width: 80px;">작성일</th>
-        <td th:text="${#dates.format(pageDto.responseDTOList[0].postDate, 'yy-MM-dd HH:mm')}"
+        <td th:text="${#dates.format(hBoardRespDTO.postDate, 'yy-MM-dd HH:mm')}"
             class="text-start" style="width: 200px;">2025.05.10</td>
         <th style="width: 80px;">조회수</th>
-        <td th:text="*{pageDto.responseDTOList[0].readCount}" class="text-start">34</td>
+        <td th:text="*{readCount}" class="text-start">34</td>
       </tr>
       </tbody>
     </table>
-    <div th:text="*{pageDto.responseDTOList[0].content}" class="border rounded p-3 mb-3 text-start"
+    <div th:text="*{content}" class="border rounded p-3 mb-3 text-start"
          style="min-height: 120px; background-color: #f8f9fa;">본문내용
     </div>
     <table class="table table-bordered align-middle mb-4">
@@ -52,8 +52,9 @@
       </tbody>
     </table>
     <div class="d-flex justify-content-end gap-2">
-      <a th:href="@{/hboard/list(pageNo=${pageDto.pageNo}, pageSize=${pageDto.pageSize})}" class="btn btn-secondary">목록으로</a>
-      <a th:href="@{/hboard/registerReply(boardNo=${pageDto.responseDTOList[0].boardNo}, ref=${pageDto.responseDTOList[0].ref}, step=${pageDto.responseDTOList[0].step}, refOrder=${pageDto.responseDTOList[0].refOrder})}" class="btn btn-warning">답글작성</a>
+      <a th:href="@{/hboard/list(pageNo=${pageNo}, pageSize=${pageSize})}" class="btn btn-secondary">목록으로</a>
+      <a th:href="@{/hboard/registerReply(ref=${hBoardRespDTO.ref}, step=${hBoardRespDTO.step}, refOrder=${hBoardRespDTO.refOrder}, pageNo=${pageNo}, pageSize=${pageSize})}" class="btn btn-warning">답글작성</a>
+                                          <!-- boardNo=${hBoardRespDTO.boardNo}, -->
       <a href="/hboard/edit/1" class="btn btn-primary">수정</a>
       <a href="/hboard/delete/1" class="btn btn-danger">삭제</a>
     </div>

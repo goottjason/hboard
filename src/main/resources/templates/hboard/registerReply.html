@@ -12,7 +12,7 @@
 <div layout:fragment="content">
   <h1>registerReply.html</h1>
 
-  <form th:action="@{/hboard/registerReply}" method="post" th:object="${hBoardRequestDTO}">
+  <form th:action="@{/hboard/registerReply}" method="post" th:object="${hBoardReqDTO}">
     <!--
     - th:action="@{/hboard/register}" : 폼을 제출할 때 데이터를 보낼 URL을 지정
     - th:object="${hBoardRequestDTO}"
@@ -56,7 +56,9 @@
     <input type="hidden" th:field="*{ref}" />
     <input type="hidden" th:field="*{step}" />
     <input type="hidden" th:field="*{refOrder}" />
-    <input type="hidden" th:value="${}"
+    <input type="hidden" name = "pageNo" th:value="${pageNo}" />
+    <input type="hidden" name = "pageSize" th:value="${pageSize}" />
+
     <table class="table table-bordered align-middle mb-4">
       <thead class="table-light">
       <tr>

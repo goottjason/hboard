@@ -1,18 +1,18 @@
 package com.jason.hboard.service;
 
-import com.jason.hboard.domain.HBoardRequestDTO;
-import com.jason.hboard.domain.HBoardResponseDTO;
-import com.jason.hboard.domain.PageHBoardRequestDTO;
-import com.jason.hboard.domain.PageHBoardResponseDTO;
+import com.jason.hboard.domain.HBoardReqDTO;
+import com.jason.hboard.domain.HBoardRespDTO;
+import com.jason.hboard.domain.PageHBoardReqDTO;
+import com.jason.hboard.domain.PageHBoardRespDTO;
 import jakarta.validation.Valid;
 
-import java.util.List;
-
 public interface HBoardService {
-  PageHBoardResponseDTO<HBoardResponseDTO> getPostsByPage(PageHBoardRequestDTO pageHBoardRequestDTO);
-  PageHBoardResponseDTO<HBoardResponseDTO>  getPostByBoardNo(PageHBoardRequestDTO pageHBoardRequestDTO);
 
-  void registerPost(@Valid HBoardRequestDTO hBoardRequestDTO);
+  PageHBoardRespDTO<HBoardRespDTO> getPostsByPage(PageHBoardReqDTO pageReqDTO);
 
-  void registerReply(@Valid HBoardRequestDTO hBoardRequestDTO);
+  HBoardRespDTO getPostByBoardNoWithIp(int boardNo, String ipAddr);
+
+  void registerPost(@Valid HBoardReqDTO hBoardReqDTO);
+
+  void registerReply(@Valid HBoardReqDTO hBoardReqDTO);
 }

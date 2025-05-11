@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @ToString
-public class PageHBoardResponseDTO<T> {
+public class PageHBoardRespDTO<T> {
 
   private int pageNo;
   private int pageSize;
@@ -21,16 +21,15 @@ public class PageHBoardResponseDTO<T> {
   private boolean showPrevBlockButton;
   private boolean showNextBlockButton;
 
-  private List<T> responseDTOList;
+  public List<T> respDTOS;
 
 
   @Builder(builderMethodName = "withPageInfo") // 빌더의 이름 지정
-  public PageHBoardResponseDTO(PageHBoardRequestDTO pageHBoardRequestDTO, List<T> responseDTOList, int totalPosts) {
-    this.pageNo = pageHBoardRequestDTO.getPageNo();
-    this.pageSize = pageHBoardRequestDTO.getPageSize();
+  public PageHBoardRespDTO(PageHBoardReqDTO pageHBoardRequestDTO, List<T> respDTOS, int totalPosts) {
     this.totalPosts = totalPosts;
 
-    this.responseDTOList = responseDTOList;
+    this.pageNo = pageHBoardRequestDTO.getPageNo();
+    this.pageSize = pageHBoardRequestDTO.getPageSize();
 
     this.blockEndPage = (((this.pageNo - 1) / this.pageSize) + 1) * this.pageSize;
     this.blockStartPage = this.blockEndPage - (this.pageSize - 1);
@@ -40,5 +39,7 @@ public class PageHBoardResponseDTO<T> {
 
     this.showPrevBlockButton = this.blockStartPage > 1;
     this.showNextBlockButton = this.blockEndPage < this.lastPage;
+
+    this.respDTOS = respDTOS;
   }
 }

@@ -11,10 +11,10 @@ public interface HBoardMapper {
   @Insert("""
     INSERT INTO selfmember (memberId, memberPwd, memberName, memberMobile, memberEmail, memberImg, memberPoint, memberGender) 
     VALUES (#{memberId}, #{memberPwd}, #{memberName}, #{memberMobile}, #{memberEmail}, #{memberImg}, #{memberPoint}, #{memberGender})""")
-  int insertNewMember(MemberRequestDTO member);
+  int insertNewMember(MemberReqDTO member);
 
   @Select("SELECT * FROM selfmember where memberId = #{memberId}")
-  List<MemberResponseDTO> selectMember(@Param("memberId") String memberId);
+  List<MemberRespDTO> selectMember(@Param("memberId") String memberId);
 
   // =========================================
 
@@ -26,7 +26,7 @@ public interface HBoardMapper {
   @Select("""
     SELECT * FROM selfhboard 
     ORDER BY ref DESC, refOrder ASC LIMIT #{offset}, #{pageSize}""")
-  List<HBoardResponseDTO> selectPostsByPage(PageHBoardRequestDTO pageHBoardRequestDTO);
+  List<HBoardRespDTO> selectPostsByPage(PageHBoardReqDTO pageReqDTO);
 
 
 
@@ -34,7 +34,7 @@ public interface HBoardMapper {
     INSERT INTO selfhboard (title, content, writer)
     VALUES (#{title}, #{content}, #{writer})""")
   @Options(useGeneratedKeys = true, keyProperty = "boardNo")
-  int insertNewPost(HBoardRequestDTO hBoardRequestDTO);
+  int insertNewPost(HBoardReqDTO hBoardRequestDTO);
 
   // 파라미터 한 개라면, @Param("boardNo")을 붙이지 않아도 됨
   @Update("UPDATE selfhboard SET ref = #{boardNo} WHERE boardNo = #{boardNo}")
@@ -47,7 +47,7 @@ public interface HBoardMapper {
 
 
   @Select("SELECT * FROM selfhboard WHERE boardNo = #{boardNo}")
-  List<HBoardResponseDTO> selectPostByboardNo(PageHBoardRequestDTO pageHBoardRequestDTO);
+  HBoardRespDTO selectPostByboardNo(int boardNo);
 
   /*
    파라미터 두 개라면, 반드시 @Param("")을 붙여야 함
@@ -60,5 +60,16 @@ public interface HBoardMapper {
     INSERT INTO selfhboard (title, content, writer, ref, step, refOrder)
     VALUES (#{title}, #{content}, #{writer}, #{ref}, #{step}, #{refOrder})""")
   @Options(useGeneratedKeys = true, keyProperty = "boardNo")
-  int insertNewReply(HBoardRequestDTO hBoardRequestDTO);
+  int insertNewReply(HBoardReqDTO hBoardRequestDTO);
+
+  @Select("""
+    SELECT IFNULL((SELECT TIMESTAMPDIFF(HOUR, readWhen, NOW()) FROM boardreadlog
+    WHERE readWho = #{ipAddr} and boardNo = #{boardNo}), -1)""")
+  int selectDateDiff(@Param("boardNo") int boardNo, @Param("ipAddr") String ipAddr);
+
+  int incrementReadCount(int boardNo);
+
+  void updateLog(String ipAddr, int boardNo);
+
+  int insertLog(String ipAddr, int boardNo);
 }

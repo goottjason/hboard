@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class MemberRequestDTO {
+public class MemberReqDTO {
   private String memberId;
   private String memberPwd;
   private String memberName;

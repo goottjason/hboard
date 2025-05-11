@@ -14,7 +14,8 @@ import java.util.List;
 @ToString
 @Getter
 @Setter
-public class PageHBoardRequestDTO {
+public class PageHBoardReqDTO {
+
   @Builder.Default
   @Min(value = 1)
   @Positive
@@ -28,21 +29,17 @@ public class PageHBoardRequestDTO {
 
   private int offset;
 
-  private String params;
-
   private int boardNo;
   private int ref;
   private int step;
   private int refOrder;
 
   @Valid
-  private List<HBoardRequestDTO> hBoardRequestDTOList;
+  private List<HBoardReqDTO> hBoardReqDTOS;
 
   public int getOffset() {
-    return (pageNo - 1) * pageSize;
     // ex. 3페이지의 offset (3 - 1) x 15 = 30
+    return (pageNo - 1) * pageSize;
   }
-  public String getParams() {
-    return "pageNo=" + pageNo + "&pageSize=" + pageSize;
-  }
+
 }

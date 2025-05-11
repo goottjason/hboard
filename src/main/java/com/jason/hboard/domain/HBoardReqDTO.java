@@ -4,15 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.sql.Timestamp;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
 @ToString
-public class HBoardRequestDTO {
+public class HBoardReqDTO {
   private int boardNo;
 
   @NotBlank(message = "제목은 필수입니다.")

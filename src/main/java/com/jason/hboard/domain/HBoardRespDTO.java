@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @ToString
-public class HBoardResponseDTO {
+public class HBoardRespDTO {
   private int boardNo;
   private String title;
   private String content;

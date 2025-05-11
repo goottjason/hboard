@@ -1,8 +1,8 @@
 package com.jason.hboard;
 
 
-import com.jason.hboard.domain.HBoardRequestDTO;
-import com.jason.hboard.domain.MemberRequestDTO;
+import com.jason.hboard.domain.HBoardReqDTO;
+import com.jason.hboard.domain.MemberReqDTO;
 import com.jason.hboard.mapper.HBoardMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class HBoardMapperTests {
   @Test
   @Rollback(value = false)
   public void testInsertNewMember() {
-    MemberRequestDTO memberRequestDTO = MemberRequestDTO.builder()
+    MemberReqDTO memberRequestDTO = MemberReqDTO.builder()
       .memberId("hong1234")
       .memberPwd("asdf")
       .memberName("Hong Gil Dong")
@@ -49,7 +49,7 @@ public class HBoardMapperTests {
   @Rollback(value = false)
   public void testRegisterPost() {
     // 1. 글 등록
-    HBoardRequestDTO hBoardRequestDTO = HBoardRequestDTO.builder()
+    HBoardReqDTO hBoardRequestDTO = HBoardReqDTO.builder()
       .title("첫번째 글")
       .content(null)
       .writer("hong1234")
@@ -73,7 +73,7 @@ public class HBoardMapperTests {
   @Rollback(value =false)
   public void testRegisterDummyData() {
     for (int i = 2; i <= 300; i++) {
-      HBoardRequestDTO hBoardRequestDTO = HBoardRequestDTO.builder()
+      HBoardReqDTO hBoardRequestDTO = HBoardReqDTO.builder()
         .title("dummy 제목 " + i)
         .content("dummy 내용 " + i)
         .writer("hong1234")

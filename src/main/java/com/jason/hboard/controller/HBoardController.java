@@ -1,26 +1,22 @@
 package com.jason.hboard.controller;
 
-import com.jason.hboard.domain.HBoardRequestDTO;
-import com.jason.hboard.domain.HBoardResponseDTO;
-import com.jason.hboard.domain.PageHBoardRequestDTO;
-import com.jason.hboard.domain.PageHBoardResponseDTO;
-import com.jason.hboard.mapper.HBoardMapper;
+import com.jason.hboard.domain.HBoardReqDTO;
+import com.jason.hboard.domain.HBoardRespDTO;
+import com.jason.hboard.domain.PageHBoardReqDTO;
+import com.jason.hboard.domain.PageHBoardRespDTO;
 import com.jason.hboard.service.HBoardService;
+import com.jason.hboard.util.GetClientIpAddr;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @Slf4j
@@ -36,28 +32,38 @@ public class HBoardController {
   }
 
 
-  // ================== 목록 불러오기
+  // ================== 목록(list) 불러오기
   @GetMapping("/hboard/list")
-  public String list(PageHBoardRequestDTO pageHBoardRequestDTO, Model model) {
+  public String list(PageHBoardReqDTO pageReqDTO, Model model) {
+
     log.info("◆list.html로 이동...");
 
     // 파라미터 없이 요청시, 기본값인 pageNo=1, pageSize=15로 DB에 요청됨
-    PageHBoardResponseDTO<HBoardResponseDTO> hBoardResponseDTO = hBoardService.getPostsByPage(pageHBoardRequestDTO);
+    PageHBoardRespDTO<HBoardRespDTO> pageRespDTO = hBoardService.getPostsByPage(pageReqDTO);
 
-    model.addAttribute("pageDto", hBoardResponseDTO);
+
+    model.addAttribute("pageRespDTO", pageRespDTO);
+
     return "/hboard/list";
   }
 
   // ================== 게시글(detail) 불러오기
   @GetMapping("/hboard/detail")
-  public String detail(PageHBoardRequestDTO pageHBoardRequestDTO, Model model,
-                       @RequestParam(value = "boardNo") int boardNo) {
+  public String detail(@RequestParam(value = "boardNo") int boardNo,
+                       @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                       @RequestParam(value = "pageSize", defaultValue = "15") int pageSize,
+                       Model model, HttpServletRequest req) {
 
-    pageHBoardRequestDTO.setBoardNo(boardNo);
 
-    PageHBoardResponseDTO<HBoardResponseDTO> hBoardResponseDTO = hBoardService.getPostByBoardNo(pageHBoardRequestDTO);
-    // HBoardResponseDTO hBoardResponseDTO = hBoardService.getPostByBoardNo(boardNo);
-    model.addAttribute("pageDto", hBoardResponseDTO);
+    String ipAddr = GetClientIpAddr.getClientIp(req);
+
+
+    HBoardRespDTO hBoardRespDTO = hBoardService.getPostByBoardNoWithIp(boardNo, ipAddr);
+
+    model.addAttribute("hBoardRespDTO", hBoardRespDTO);
+    model.addAttribute("pageNo", pageNo);
+    model.addAttribute("pageSize", pageSize);
+
     return "/hboard/detail";
   }
 
@@ -74,17 +80,15 @@ public class HBoardController {
   // ================== 게시글 등록하기
   @GetMapping("/hboard/register")
   public String register(Model model) {
-    // 빈 객체 생성 후
-    // HBoardRequestDTO hBoardRequestDTO = new HBoardRequestDTO();
-    PageHBoardRequestDTO pageHBoardRequestDTO = new PageHBoardRequestDTO();
-    // 뷰로 객체를 전달
-    model.addAttribute("pageDto", pageHBoardRequestDTO);
 
+    // 빈 객체 생성 후 뷰로 객체를 전달
+    model.addAttribute("hBoardReqDTO", new HBoardReqDTO());
 
     return "/hboard/register";
   }
+
   @PostMapping("/hboard/register")
-  public String register(@Valid @ModelAttribute("pageDto") PageHBoardRequestDTO pageHBoardRequestDTO, BindingResult bindingResult) {
+  public String register(@Valid @ModelAttribute("hBoardReqDTO") HBoardReqDTO hBoardReqDTO, BindingResult bindingResult) {
     /*
     @Valid : 각 필드를 유효성 검사하여 실패한 필드와 메시지가 BindingResult 객체에 저장됨
     @ModelAttribute : 뷰에서 컨트롤러로 입력한 데이터가 자바 객체의 각 필드에 바인딩되어 전달됨
@@ -101,28 +105,32 @@ public class HBoardController {
     }
 
     // 글 등록
-    hBoardService.registerPost(pageHBoardRequestDTO.getHBoardRequestDTOList().get(0));
+    hBoardService.registerPost(hBoardReqDTO);
 
     // hBoardRequestDTO에 boardNo를 set되었으므로, get하여 GET요청하도록 redirect함
-    return "redirect:/hboard/detail?boardNo=" + pageHBoardRequestDTO.getHBoardRequestDTOList().get(0).getBoardNo();
+    return "redirect:/hboard/detail?boardNo=" + hBoardReqDTO.getBoardNo();
   }
 
   // ================== 답글 등록하기
   @GetMapping("/hboard/registerReply")
-  public String registerReply(@RequestParam("ref") int ref,
-                              @RequestParam("step") int step,
-                              @RequestParam("refOrder") int refOrder,
+  public String registerReply(@RequestParam(value = "ref") int ref,
+                              @RequestParam(value = "step") int step,
+                              @RequestParam(value = "refOrder") int refOrder,
+                              @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                              @RequestParam(value = "pageSize", defaultValue = "15") int pageSize,
                               Model model) {
     // 빈 객체 생성 후
-    HBoardRequestDTO hBoardRequestDTO = new HBoardRequestDTO();
+    HBoardReqDTO hBoardReqDTO = new HBoardReqDTO();
 
     // 뷰단에서 파라미터로 받아온 원래의 게시글의 ref, step, refOrder를 set한 후
-    hBoardRequestDTO.setRef(ref);
-    hBoardRequestDTO.setStep(step);
-    hBoardRequestDTO.setRefOrder(refOrder);
+    hBoardReqDTO.setRef(ref);
+    hBoardReqDTO.setStep(step);
+    hBoardReqDTO.setRefOrder(refOrder);
 
     // 뷰로 객체를 전달
-    model.addAttribute("hBoardRequestDTO", hBoardRequestDTO);
+    model.addAttribute("hBoardReqDTO", hBoardReqDTO);
+    model.addAttribute("pageNo", pageNo);
+    model.addAttribute("pageSize", pageSize);
 
     /*
      Spring MVC가 /templates/hboard/registerReply.html를 찾고,
@@ -132,15 +140,19 @@ public class HBoardController {
   }
 
   @PostMapping("/hboard/registerReply")
-  public String registerReply(@Valid @ModelAttribute("hBoardRequestDTO") HBoardRequestDTO hBoardRequestDTO,
+  public String registerReply(@Valid @ModelAttribute("hBoardRequestDTO") HBoardReqDTO hBoardRequestDTO,
+                              @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+                              @RequestParam(value = "pageSize", defaultValue = "15") int pageSize,
                               BindingResult bindingResult) {
+
     if(bindingResult.hasErrors()) {
       return "/hboard/registerReply";
     }
 
     // 글 등록
     hBoardService.registerReply(hBoardRequestDTO);
-    return "redirect:/hboard/detail?boardNo=" + hBoardRequestDTO.getBoardNo();
+
+    return "redirect:/hboard/detail?boardNo=" + hBoardRequestDTO.getBoardNo() + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
   }
 
 }
