@@ -67,9 +67,12 @@ public interface HBoardMapper {
     WHERE readWho = #{ipAddr} and boardNo = #{boardNo}), -1)""")
   int selectDateDiff(@Param("boardNo") int boardNo, @Param("ipAddr") String ipAddr);
 
+  @Update("update selfhboard set readCount = readCount + 1 where boardNo = #{boardNo}")
   int incrementReadCount(int boardNo);
 
-  void updateLog(String ipAddr, int boardNo);
+  @Update("update selfhboardlog set readWhen = now() where readWho = #{readWho} and boardNo = #{boardNo}")
+  void updateLog(@Param("readWho") String readWho, @Param("boardNo") int boardNo);
 
-  int insertLog(String ipAddr, int boardNo);
+  @Insert("insert into selfhboardlog (readWho, boardNo) values(#{readWho}, #{boardNo})")
+  int insertLog(@Param("readWho") String readWho, @Param("boardNo") int boardNo);
 }

@@ -27,5 +27,32 @@ CREATE TABLE `selfhboard` (
     PRIMARY KEY (`boardNo`),
     KEY `fk_writer_idx` (`writer`),
     CONSTRAINT `fk_writer` FOREIGN KEY (`writer`) REFERENCES `selfmember` (`memberId`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- selfhboardlog 테이블 생성
+CREATE TABLE `selfhboardlog` (
+    `boardReadLogNo` int NOT NULL AUTO_INCREMENT,
+    `readWho` varchar(130) NOT NULL,
+    `readWhen` datetime DEFAULT CURRENT_TIMESTAMP,
+    `boardNo` int NOT NULL,
+    PRIMARY KEY (`boardReadLogNo`),
+    KEY `fk_boardreadlog_boardno_idx` (`boardNo`),
+    CONSTRAINT `fk_hboardlog_boardno` FOREIGN KEY (`boardNo`) REFERENCES `selfhboard` (`boardNo`)
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE `boardupfiles` (
+                                `fileNo` int NOT NULL AUTO_INCREMENT,
+                                `originalFileName` varchar(100) NOT NULL,
+                                `newFileName` varchar(150) NOT NULL,
+                                `thumbFileName` varchar(150) DEFAULT NULL,
+                                `isImage` tinyint DEFAULT '0',
+                                `ext` varchar(20) DEFAULT NULL,
+                                `size` bigint DEFAULT NULL,
+                                `boardNo` int DEFAULT NULL,
+                                `base64` longtext,
+                                `filePath` varchar(200) DEFAULT NULL,
+                                PRIMARY KEY (`fileNo`),
+                                KEY `fk_upfiles_hboard_idx` (`boardNo`),
+                                CONSTRAINT `fk_upfiles_hboard` FOREIGN KEY (`boardNo`) REFERENCES `hboard` (`boardNo`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='게시글에 업로드되는 파일정보'
