@@ -63,7 +63,7 @@ public interface HBoardMapper {
   int insertNewReply(HBoardReqDTO hBoardRequestDTO);
 
   @Select("""
-    SELECT IFNULL((SELECT TIMESTAMPDIFF(HOUR, readWhen, NOW()) FROM boardreadlog
+    SELECT IFNULL((SELECT TIMESTAMPDIFF(HOUR, readWhen, NOW()) FROM selfhboardlog
     WHERE readWho = #{ipAddr} and boardNo = #{boardNo}), -1)""")
   int selectDateDiff(@Param("boardNo") int boardNo, @Param("ipAddr") String ipAddr);
 
@@ -75,4 +75,7 @@ public interface HBoardMapper {
 
   @Insert("insert into selfhboardlog (readWho, boardNo) values(#{readWho}, #{boardNo})")
   int insertLog(@Param("readWho") String readWho, @Param("boardNo") int boardNo);
+
+  @Update("update selfhboard set title = #{title}, content = #{content} where boardNo = #{boardNo}")
+  void updatePost(HBoardReqDTO hBoardReqDTO);
 }

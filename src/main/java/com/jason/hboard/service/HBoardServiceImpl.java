@@ -43,30 +43,30 @@ public class HBoardServiceImpl implements HBoardService {
   @Transactional(rollbackFor = Exception.class)
   public HBoardRespDTO getPostByBoardNoWithIp(int boardNo, String ipAddr) {
 
+    // 1. 게시글 불러오기
     HBoardRespDTO hBoardRespDTO= hBoardMapper.selectPostByboardNo(boardNo);
 
-    // 조회수 처리
-
-    // ipAddr 유저가 boardNo번 글을 조회한 적이 없다 -> 조회 내역 저장 -> 조회수 증가
+    // 2. selfhboardlog 테이블에서 ipAddr 유저가 boardNo 글의 최근읽은시점의 현재시점과 차이값을 시간으로 구하기
+    /*
+    조회한 값이 없다면, -1
+    조회한 값이 있다면, 그 시간차이를 반환
+     */
     int dateDiff = hBoardMapper.selectDateDiff(boardNo, ipAddr);
 
-    boolean isCountable = false;
     if(dateDiff == -1) {
-      // 최초조회
-      if (hBoardMapper.insertLog(ipAddr, boardNo) == 1) {
-        isCountable = true;
-      }
+      // 3. 최초 조회면 로그 추가
+      hBoardMapper.insertLog(ipAddr, boardNo);
     } else if (dateDiff >= 24) {
+      // 3. 최근읽은 시점으로부터 24시간이 넘은 경우, 로그의 readWhen을 현재시점으로 업데이트
       hBoardMapper.updateLog(ipAddr, boardNo);
-      isCountable = true;
     }
 
-    if (isCountable) {
-      if (hBoardMapper.incrementReadCount(boardNo) == 1) {
-        hBoardRespDTO.setReadCount(hBoardRespDTO.getReadCount() + 1);
-      }
-    }
+    // DB에서 조회수 1 증가
+    hBoardMapper.incrementReadCount(boardNo);
+    // 증가된 조회수를 hBoardRespDTO에 set하기
+    hBoardRespDTO.setReadCount(hBoardRespDTO.getReadCount() + 1);
 
+    // 과정을 거친 후, 게시글 반환
     return hBoardMapper.selectPostByboardNo(boardNo);
   }
 
@@ -90,5 +90,15 @@ public class HBoardServiceImpl implements HBoardService {
 
     /*if (hBoardMapper.insertNewReply(hBoardRequestDTO) == 1) {
     }*/
+  }
+
+  @Override
+  public HBoardRespDTO getPostByBoardForModify(int boardNo) {
+    return hBoardMapper.selectPostByboardNo(boardNo);
+  }
+
+  @Override
+  public void modifyPost(HBoardReqDTO hBoardReqDTO) {
+    hBoardMapper.updatePost(hBoardReqDTO);
   }
 }

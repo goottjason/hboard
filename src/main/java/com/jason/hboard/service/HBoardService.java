@@ -15,4 +15,8 @@ public interface HBoardService {
   void registerPost(@Valid HBoardReqDTO hBoardReqDTO);
 
   void registerReply(@Valid HBoardReqDTO hBoardReqDTO);
+
+  HBoardRespDTO getPostByBoardForModify(int boardNo);
+
+  void modifyPost(@Valid HBoardReqDTO hBoardReqDTO);
 }

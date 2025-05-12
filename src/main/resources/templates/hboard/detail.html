@@ -52,11 +52,10 @@
       </tbody>
     </table>
     <div class="d-flex justify-content-end gap-2">
-      <a th:href="@{/hboard/list(pageNo=${pageNo}, pageSize=${pageSize})}" class="btn btn-secondary">목록으로</a>
-      <a th:href="@{/hboard/registerReply(ref=${hBoardRespDTO.ref}, step=${hBoardRespDTO.step}, refOrder=${hBoardRespDTO.refOrder}, pageNo=${pageNo}, pageSize=${pageSize})}" class="btn btn-warning">답글작성</a>
-                                          <!-- boardNo=${hBoardRespDTO.boardNo}, -->
-      <a href="/hboard/edit/1" class="btn btn-primary">수정</a>
-      <a href="/hboard/delete/1" class="btn btn-danger">삭제</a>
+      <a th:href="|@{/hboard/list}?${pageHBoardReqDTO.params}|" class="btn btn-secondary">목록으로</a>
+      <a th:href="|@{/hboard/registerReply}?ref=${hBoardRespDTO.ref}&step=${hBoardRespDTO.step}&refOrder=${hBoardRespDTO.refOrder}&${pageHBoardReqDTO.params}|" class="btn btn-warning">답글작성</a>
+      <a th:href="|@{/hboard/modify}?boardNo=${hBoardRespDTO.boardNo}&${pageHBoardReqDTO.params}|" class="btn btn-primary">수정</a>
+      <a th:href="|@{/hboard/remove}?boardNo=${hBoardRespDTO.boardNo}&${pageHBoardReqDTO.params}|" class="btn btn-danger">삭제</a>
     </div>
   </div>
 </div>

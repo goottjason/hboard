@@ -49,20 +49,24 @@ public class HBoardController {
 
   // ================== 게시글(detail) 불러오기
   @GetMapping("/hboard/detail")
-  public String detail(@RequestParam(value = "boardNo") int boardNo,
-                       @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
-                       @RequestParam(value = "pageSize", defaultValue = "15") int pageSize,
-                       Model model, HttpServletRequest req) {
+  public String detail(@RequestParam(value = "boardNo", required = false, defaultValue = "-1") int boardNo,
+                       PageHBoardReqDTO pageHBoardReqDTO, Model model, HttpServletRequest req) {
 
-
+    // 클라이언트의 IP주소를 얻어와서 서비스단에 전달
     String ipAddr = GetClientIpAddr.getClientIp(req);
 
-
+    // 조회수 로직을 거친 후 게시글 불러오기
     HBoardRespDTO hBoardRespDTO = hBoardService.getPostByBoardNoWithIp(boardNo, ipAddr);
 
     model.addAttribute("hBoardRespDTO", hBoardRespDTO);
-    model.addAttribute("pageNo", pageNo);
-    model.addAttribute("pageSize", pageSize);
+
+    // model.addAttribute("pageHBoardReqDTO", pageHBoardReqDTO);
+
+    /* [[ 생략해도 되는 이유? ]]
+    컨트롤러의 파라미터로 PageHBoardReqDTO pageHBoardReqDTO와 같이
+    커맨드(또는 폼) 객체를 선언하면, 스프링은 이 객체를 자동으로 생성하고,
+    요청 파라미터를 바인딩해주고, 자동으로 모델에 등록
+     */
 
     return "/hboard/detail";
   }
@@ -154,5 +158,35 @@ public class HBoardController {
 
     return "redirect:/hboard/detail?boardNo=" + hBoardRequestDTO.getBoardNo() + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
   }
+
+
+  @GetMapping("/hboard/modify")
+  public String modify(@RequestParam(value = "boardNo") int boardNo,
+                       PageHBoardReqDTO pageHBoardReqDTO, Model model) {
+
+    HBoardRespDTO hBoardRespDTO = hBoardService.getPostByBoardForModify(boardNo);
+
+    model.addAttribute("hBoardRespDTO", hBoardRespDTO);
+    // 빈 객체 생성 후 뷰로 객체를 전달
+    model.addAttribute("hBoardReqDTO", new HBoardReqDTO());
+    return "/hboard/modify";
+  }
+
+  @PostMapping("/hboard/modify")
+  public String modify(@Valid @ModelAttribute("hBoardReqDTO") HBoardReqDTO hBoardReqDTO, BindingResult bindingResult,
+                       PageHBoardReqDTO pageHBoardReqDTO, Model model) {
+
+    // hBoardReqDTO.setBoardNo(hBoardReqDTO.getBoardNo());
+    log.info("::::asfdjlkajdflkj:::::{}", hBoardReqDTO.getBoardNo());
+
+    if(bindingResult.hasErrors()) {
+      return "redirect:/hboard/modify?boardNo=" + hBoardReqDTO.getBoardNo() + "&" + pageHBoardReqDTO.getParams();
+    }
+
+    hBoardService.modifyPost(hBoardReqDTO);
+    log.info(":::::::::::::::::::::::::::::{}", hBoardReqDTO.getBoardNo());
+    return "redirect:/hboard/detail?boardNo=" + hBoardReqDTO.getBoardNo()+ "&" + pageHBoardReqDTO.getParams();
+  }
+
 
 }
