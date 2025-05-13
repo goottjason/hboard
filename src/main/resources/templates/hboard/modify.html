@@ -17,6 +17,9 @@
     <input type="hidden" name="ref" th:value="${hBoardRespDTO.ref}"/>
     <input type="hidden" name="step" th:value="${hBoardRespDTO.step}"/>
     <input type="hidden" name="refOrder" th:value="${hBoardRespDTO.refOrder}"/>
+    <!--pageNo, pageSize 어떻게 전달하지?-->
+    <input type="hidden" name="pageNo" th:value="${pageHBoardReqDTO.pageNo}">
+    <input type="hidden" name="pagingSize" th:value="${pageHBoardReqDTO.pageSize}">
     <table class="table" >
       <tbody>
       <tr>

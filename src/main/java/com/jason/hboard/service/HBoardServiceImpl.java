@@ -101,4 +101,9 @@ public class HBoardServiceImpl implements HBoardService {
   public void modifyPost(HBoardReqDTO hBoardReqDTO) {
     hBoardMapper.updatePost(hBoardReqDTO);
   }
+
+  @Override
+  public void removePost(int boardNo) {
+    hBoardMapper.deletePost(boardNo);
+  }
 }

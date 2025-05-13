@@ -19,4 +19,6 @@ public interface HBoardService {
   HBoardRespDTO getPostByBoardForModify(int boardNo);
 
   void modifyPost(@Valid HBoardReqDTO hBoardReqDTO);
+
+  void removePost(int boardNo);
 }

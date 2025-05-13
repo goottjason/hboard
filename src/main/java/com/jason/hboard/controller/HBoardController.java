@@ -41,7 +41,6 @@ public class HBoardController {
     // 파라미터 없이 요청시, 기본값인 pageNo=1, pageSize=15로 DB에 요청됨
     PageHBoardRespDTO<HBoardRespDTO> pageRespDTO = hBoardService.getPostsByPage(pageReqDTO);
 
-
     model.addAttribute("pageRespDTO", pageRespDTO);
 
     return "/hboard/list";
@@ -120,9 +119,7 @@ public class HBoardController {
   public String registerReply(@RequestParam(value = "ref") int ref,
                               @RequestParam(value = "step") int step,
                               @RequestParam(value = "refOrder") int refOrder,
-                              @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
-                              @RequestParam(value = "pageSize", defaultValue = "15") int pageSize,
-                              Model model) {
+                              PageHBoardReqDTO pageHBoardReqDTO, Model model) {
     // 빈 객체 생성 후
     HBoardReqDTO hBoardReqDTO = new HBoardReqDTO();
 
@@ -133,8 +130,6 @@ public class HBoardController {
 
     // 뷰로 객체를 전달
     model.addAttribute("hBoardReqDTO", hBoardReqDTO);
-    model.addAttribute("pageNo", pageNo);
-    model.addAttribute("pageSize", pageSize);
 
     /*
      Spring MVC가 /templates/hboard/registerReply.html를 찾고,
@@ -144,26 +139,24 @@ public class HBoardController {
   }
 
   @PostMapping("/hboard/registerReply")
-  public String registerReply(@Valid @ModelAttribute("hBoardRequestDTO") HBoardReqDTO hBoardRequestDTO,
-                              @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
-                              @RequestParam(value = "pageSize", defaultValue = "15") int pageSize,
-                              BindingResult bindingResult) {
+  public String registerReply(@Valid @ModelAttribute("HBoardReqDTO") HBoardReqDTO hBoardReqDTO, BindingResult bindingResult,
+                              PageHBoardReqDTO pageHBoardReqDTO, Model model) {
 
     if(bindingResult.hasErrors()) {
       return "/hboard/registerReply";
     }
 
     // 글 등록
-    hBoardService.registerReply(hBoardRequestDTO);
+    hBoardService.registerReply(hBoardReqDTO);
 
-    return "redirect:/hboard/detail?boardNo=" + hBoardRequestDTO.getBoardNo() + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
+    return "redirect:/hboard/detail?boardNo=" + hBoardReqDTO.getBoardNo() + "&" + pageHBoardReqDTO.getParams();
   }
 
 
   @GetMapping("/hboard/modify")
   public String modify(@RequestParam(value = "boardNo") int boardNo,
                        PageHBoardReqDTO pageHBoardReqDTO, Model model) {
-
+    log.info("pageHBoardReqDTO=" + pageHBoardReqDTO);
     HBoardRespDTO hBoardRespDTO = hBoardService.getPostByBoardForModify(boardNo);
 
     model.addAttribute("hBoardRespDTO", hBoardRespDTO);
@@ -176,11 +169,12 @@ public class HBoardController {
   public String modify(@Valid @ModelAttribute("hBoardReqDTO") HBoardReqDTO hBoardReqDTO, BindingResult bindingResult,
                        PageHBoardReqDTO pageHBoardReqDTO, Model model) {
 
+    log.info("pageHBoardReqDTO=" + pageHBoardReqDTO);
     // hBoardReqDTO.setBoardNo(hBoardReqDTO.getBoardNo());
     log.info("::::asfdjlkajdflkj:::::{}", hBoardReqDTO.getBoardNo());
 
     if(bindingResult.hasErrors()) {
-      return "redirect:/hboard/modify?boardNo=" + hBoardReqDTO.getBoardNo() + "&" + pageHBoardReqDTO.getParams();
+      return "/hboard/modify";
     }
 
     hBoardService.modifyPost(hBoardReqDTO);
@@ -188,5 +182,12 @@ public class HBoardController {
     return "redirect:/hboard/detail?boardNo=" + hBoardReqDTO.getBoardNo()+ "&" + pageHBoardReqDTO.getParams();
   }
 
+  @PostMapping("/hboard/remove")
+  public String remove(@RequestParam("boardNo") int boardNo, PageHBoardReqDTO pageHBoardReqDTO, Model model) {
+    log.info("pageHBoardReqDTO=" + pageHBoardReqDTO);
+    hBoardService.removePost(boardNo);
+
+    return "redirect:/hboard/list";
+  }
 
 }

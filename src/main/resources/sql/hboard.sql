@@ -42,17 +42,46 @@ CREATE TABLE `selfhboardlog` (
 
 
 CREATE TABLE `boardupfiles` (
-                                `fileNo` int NOT NULL AUTO_INCREMENT,
-                                `originalFileName` varchar(100) NOT NULL,
-                                `newFileName` varchar(150) NOT NULL,
-                                `thumbFileName` varchar(150) DEFAULT NULL,
-                                `isImage` tinyint DEFAULT '0',
-                                `ext` varchar(20) DEFAULT NULL,
-                                `size` bigint DEFAULT NULL,
-                                `boardNo` int DEFAULT NULL,
-                                `base64` longtext,
-                                `filePath` varchar(200) DEFAULT NULL,
-                                PRIMARY KEY (`fileNo`),
-                                KEY `fk_upfiles_hboard_idx` (`boardNo`),
-                                CONSTRAINT `fk_upfiles_hboard` FOREIGN KEY (`boardNo`) REFERENCES `hboard` (`boardNo`) ON DELETE CASCADE
+    `fileNo` int NOT NULL AUTO_INCREMENT,
+    `originalFileName` varchar(100) NOT NULL,
+    `newFileName` varchar(150) NOT NULL,
+    `thumbFileName` varchar(150) DEFAULT NULL,
+    `isImage` tinyint DEFAULT '0',
+    `ext` varchar(20) DEFAULT NULL,
+    `size` bigint DEFAULT NULL,
+    `boardNo` int DEFAULT NULL,
+    `base64` longtext,
+    `filePath` varchar(200) DEFAULT NULL,
+    PRIMARY KEY (`fileNo`),
+    KEY `fk_upfiles_hboard_idx` (`boardNo`),
+    CONSTRAINT `fk_upfiles_hboard` FOREIGN KEY (`boardNo`) REFERENCES `hboard` (`boardNo`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='게시글에 업로드되는 파일정보'
+
+
+CREATE TABLE `pointdef` (
+    `pointWhy` enum('SIGNUP','LOGIN','WRITE','REPLY') NOT NULL,
+    `pointScore` int NOT NULL,
+    PRIMARY KEY (`pointWhy`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='멤버에게 적립할 포인트에 대한 정책'
+
+
+CREATE TABLE `kjw`.`pointlog` (
+    `pointLogNo` INT NOT NULL AUTO_INCREMENT,
+    `pointWho` VARCHAR(8) NOT NULL,
+    `pointWhen` DATETIME NULL DEFAULT now(),
+    `pointWhy` ENUM('SIGNUP', 'LOGIN', 'WRITE', 'REPLY') NOT NULL,
+    `pointScore` INT NULL,
+    PRIMARY KEY (`pointLogNo`),
+    INDEX `fk_pointlog_member_idx` (`pointWho` ASC) VISIBLE,
+    INDEX `fk_pointlog_pointdef_idx` (`pointWhy` ASC) VISIBLE,
+    CONSTRAINT `fk_pointlog_member`
+    FOREIGN KEY (`pointWho`)
+      REFERENCES `kjw`.`member` (`memberId`)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION,
+    CONSTRAINT `fk_pointlog_pointdef`
+    FOREIGN KEY (`pointWhy`)
+      REFERENCES `kjw`.`pointdef` (`pointWhy`)
+      ON DELETE NO ACTION
+      ON UPDATE CASCADE)
+    COMMENT = '멤버에게 지급된 포인트 기록 테이블';

@@ -78,4 +78,7 @@ public interface HBoardMapper {
 
   @Update("update selfhboard set title = #{title}, content = #{content} where boardNo = #{boardNo}")
   void updatePost(HBoardReqDTO hBoardReqDTO);
+
+  @Delete("update selfhboard set status = 'D', title = '', content = '' where boardNo = #{boardNo}")
+  void deletePost(int boardNo);
 }
