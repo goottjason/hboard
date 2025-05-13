@@ -3,12 +3,16 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
       layout:decorate="~{layout/layout.html}">
+
+
 <head>
   <th:block layout:fragment="head">
     <title>modify.html</title>
   </th:block>
 </head>
+
 <body>
+
 <div layout:fragment="content">
   <h1>modify.html</h1>
   <div th:text="${hBoardRespDTO}"></div>

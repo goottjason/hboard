@@ -19,4 +19,5 @@ public class HBoardRespDTO {
   private int ref;
   private int step;
   private int refOrder;
+  private String status;
 }

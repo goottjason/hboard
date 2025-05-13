@@ -20,13 +20,13 @@ public interface HBoardMapper {
 
 
 
-  @Select("SELECT count(*) FROM selfhboard")
-  int selectTotalPostsCount();
+  /*@Select("SELECT count(*) FROM selfhboard")*/
+  int selectTotalPostsCount(PageHBoardReqDTO pageHBoardReqDTO);
 
-  @Select("""
+/*  @Select("""
     SELECT * FROM selfhboard 
-    ORDER BY ref DESC, refOrder ASC LIMIT #{offset}, #{pageSize}""")
-  List<HBoardRespDTO> selectPostsByPage(PageHBoardReqDTO pageReqDTO);
+    ORDER BY ref DESC, refOrder ASC LIMIT #{offset}, #{pageSize}""")*/
+  List<HBoardRespDTO> selectPostsByPage(PageHBoardReqDTO pageHBoardReqDTO);
 
 
 

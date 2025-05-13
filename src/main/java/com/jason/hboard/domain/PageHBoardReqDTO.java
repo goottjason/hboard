@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import lombok.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Builder
@@ -18,13 +18,11 @@ public class PageHBoardReqDTO {
 
   @Builder.Default
   @Min(value = 1)
-  @Positive
   private int pageNo = 1;
 
   @Builder.Default
   @Min(value = 10)
   @Max(value = 100)
-  @Positive
   private int pageSize = 15;
 
   private int offset;
@@ -33,6 +31,10 @@ public class PageHBoardReqDTO {
   private int ref;
   private int step;
   private int refOrder;
+
+  private String type;
+  private String keyword;
+
 
   private String params;
 
@@ -44,14 +46,24 @@ public class PageHBoardReqDTO {
     return (pageNo - 1) * pageSize;
   }
 
-  public String getParams() {
-    if (params == null) {
-      params = generateParams();
+  public List<String> getTypes() {
+    if (type == null || type.isEmpty()) {
+      return null;
+    } else {
+      return Arrays.asList(type.split("")); // of는 뭐지?
     }
-    return params;
   }
 
-  private String generateParams() {
+
+  public String getNoSize() {
+    return generateNoSize();
+  }
+
+  public String getTypeKeyword() {
+    return generateTypeKeyword();
+  }
+
+  private String generateNoSize() {
 
     /*
     String은 불변 객체라서 문자열을 합치거나 수정할 때마다 새로운 객체가 생성
@@ -62,9 +74,21 @@ public class PageHBoardReqDTO {
 
     StringBuilder params = new StringBuilder();
     params.append("pageNo=").append(pageNo).append("&");
-    params.append("pageSize=").append(pageSize).append("&");
+    params.append("pageSize=").append(pageSize);
     return params.toString();
   }
+
+  private String generateTypeKeyword() {
+    StringBuilder params = new StringBuilder();
+    if(type != null && !type.isBlank()) {
+      params.append("type=").append(type).append("&");
+    }
+    if(keyword != null && !keyword.isBlank()) {
+      params.append("keyword=").append(keyword);
+    }
+    return params.toString();
+  }
+
 
 
 }

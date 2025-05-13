@@ -25,17 +25,19 @@ public class PageHBoardRespDTO<T> {
 
 
   @Builder(builderMethodName = "withPageInfo") // 빌더의 이름 지정
-  public PageHBoardRespDTO(PageHBoardReqDTO pageHBoardRequestDTO, List<T> respDTOS, int totalPosts) {
+  public PageHBoardRespDTO(PageHBoardReqDTO pageHBoardReqDTO, List<T> respDTOS, int totalPosts) {
     this.totalPosts = totalPosts;
 
-    this.pageNo = pageHBoardRequestDTO.getPageNo();
-    this.pageSize = pageHBoardRequestDTO.getPageSize();
+    this.pageNo = pageHBoardReqDTO.getPageNo();
+    this.pageSize = pageHBoardReqDTO.getPageSize();
 
     this.blockEndPage = (((this.pageNo - 1) / this.pageSize) + 1) * this.pageSize;
     this.blockStartPage = this.blockEndPage - (this.pageSize - 1);
     this.lastPage = (int)(Math.ceil(this.totalPosts/(double)pageSize));
 
     this.blockEndPage = Math.min(this.blockEndPage, this.lastPage);
+
+    if(this.blockEndPage == 0) this.blockEndPage = 1;
 
     this.showPrevBlockButton = this.blockStartPage > 1;
     this.showNextBlockButton = this.blockEndPage < this.lastPage;

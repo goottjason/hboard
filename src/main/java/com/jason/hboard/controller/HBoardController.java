@@ -34,14 +34,16 @@ public class HBoardController {
 
   // ================== 목록(list) 불러오기
   @GetMapping("/hboard/list")
-  public String list(PageHBoardReqDTO pageReqDTO, Model model) {
+  public String list(PageHBoardReqDTO pageHBoardReqDTO, Model model) {
+
 
     log.info("◆list.html로 이동...");
-
+    log.info("pageHBoardReqDTO:{}", pageHBoardReqDTO);
     // 파라미터 없이 요청시, 기본값인 pageNo=1, pageSize=15로 DB에 요청됨
-    PageHBoardRespDTO<HBoardRespDTO> pageRespDTO = hBoardService.getPostsByPage(pageReqDTO);
+    PageHBoardRespDTO<HBoardRespDTO> pageHBoardRespDTO
+      = hBoardService.getPostsByPage(pageHBoardReqDTO);
 
-    model.addAttribute("pageRespDTO", pageRespDTO);
+    model.addAttribute("pageHBoardRespDTO", pageHBoardRespDTO);
 
     return "/hboard/list";
   }
@@ -149,7 +151,7 @@ public class HBoardController {
     // 글 등록
     hBoardService.registerReply(hBoardReqDTO);
 
-    return "redirect:/hboard/detail?boardNo=" + hBoardReqDTO.getBoardNo() + "&" + pageHBoardReqDTO.getParams();
+    return "redirect:/hboard/detail?boardNo=" + hBoardReqDTO.getBoardNo() + "&" + pageHBoardReqDTO.getNoSize();
   }
 
 
@@ -179,15 +181,18 @@ public class HBoardController {
 
     hBoardService.modifyPost(hBoardReqDTO);
     log.info(":::::::::::::::::::::::::::::{}", hBoardReqDTO.getBoardNo());
-    return "redirect:/hboard/detail?boardNo=" + hBoardReqDTO.getBoardNo()+ "&" + pageHBoardReqDTO.getParams();
+    return "redirect:/hboard/detail?boardNo=" + hBoardReqDTO.getBoardNo()+ "&" + pageHBoardReqDTO.getNoSize();
   }
 
   @PostMapping("/hboard/remove")
-  public String remove(@RequestParam("boardNo") int boardNo, PageHBoardReqDTO pageHBoardReqDTO, Model model) {
+  public String remove(@RequestParam("boardNo") int boardNo,
+                       PageHBoardReqDTO pageHBoardReqDTO, Model model) {
+
     log.info("pageHBoardReqDTO=" + pageHBoardReqDTO);
+
     hBoardService.removePost(boardNo);
 
-    return "redirect:/hboard/list";
+    return "redirect:/hboard/list?" + pageHBoardReqDTO.getNoSize();
   }
 
 }

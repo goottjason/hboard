@@ -19,12 +19,12 @@ public class HBoardServiceImpl implements HBoardService {
   private final HBoardMapper hBoardMapper;
 
   @Override
-  public PageHBoardRespDTO<HBoardRespDTO> getPostsByPage(PageHBoardReqDTO pageReqDTO) {
+  public PageHBoardRespDTO<HBoardRespDTO> getPostsByPage(PageHBoardReqDTO pageHBoardReqDTO) {
     // 현재 총 게시글의 수를 카운트
-    int totalPosts = hBoardMapper.selectTotalPostsCount();
+    int totalPosts = hBoardMapper.selectTotalPostsCount(pageHBoardReqDTO);
 
     // pageNo를 토대로 만들어진 offset과 pageSize로 posts를 리스트에 담음
-    List<HBoardRespDTO> hBoardRespDTOS = hBoardMapper.selectPostsByPage(pageReqDTO);
+    List<HBoardRespDTO> hBoardRespDTOS = hBoardMapper.selectPostsByPage(pageHBoardReqDTO);
 
     /* 요청할 당시의 pageHBoardRequestDTO의 값이 필요한 이유?
     blockEndPage, blockStartPage, lastPage, showPrevBlockButton, showNextBlockButton의 값을 응답할 때
@@ -33,7 +33,7 @@ public class HBoardServiceImpl implements HBoardService {
 
     // 커스텀 빌더메서드
     return PageHBoardRespDTO.<HBoardRespDTO>withPageInfo()
-      .pageHBoardRequestDTO(pageReqDTO)
+      .pageHBoardReqDTO(pageHBoardReqDTO)
       .respDTOS(hBoardRespDTOS)
       .totalPosts(totalPosts)
       .build();
